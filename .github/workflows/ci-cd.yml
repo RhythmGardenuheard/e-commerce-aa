@@ -1,0 +1,62 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-backend:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    - name: Install dependencies
+      run: |
+        cd e-commerce-backend
+        pip install -r requirements.txt
+    - name: Run tests
+      run: |
+        cd e-commerce-backend
+        pytest
+
+  test-frontend:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+    - name: Install dependencies
+      run: |
+        cd e-commerce-frontend
+        npm install
+    - name: Run tests
+      run: |
+        cd e-commerce-frontend
+        npm test -- --coverage --watchAll=false
+
+  build-and-deploy:
+    needs: [test-backend, test-frontend]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+    - uses: actions/checkout@v4
+
+    # Deploy backend to Railway
+    - name: Deploy Backend to Railway
+      run: |
+        # Add Railway CLI deployment commands here
+        echo "Backend deployment to Railway"
+
+    # Deploy frontend to Vercel
+    - name: Deploy Frontend to Vercel
+      run: |
+        cd e-commerce-frontend
+        npm install -g vercel
+        vercel --prod --yes

@@ -1,0 +1,12 @@
+fastapi==0.133.0
+uvicorn[standard]
+python-jose[cryptography]
+passlib[bcrypt]
+python-multipart
+prisma
+psycopg2-binary
+websockets
+pytest
+pytest-asyncio
+httpx
+pydantic-settings
